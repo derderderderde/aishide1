@@ -78,7 +78,7 @@
         }
         .scan-info {
             font-size: 14px;
-            color: red;
+            color: rgb(198, 0, 0);
             margin-left: 10px;
         }
     </style>
@@ -142,7 +142,7 @@
         <div class="white-box">
             <div class="van-col">
                 <h3>扫码信息</h3>
-                <span class="scan-info" id="scan-info">扫码0人0次</span>
+                <span class="scan-info" id="scan-info" style="font-weight: bold;">扫码0人0次</span>
                 <button class="expand-button" id="toggle-log">展开</button>
             </div>
             <div id="visit-log" style="display: none;"></div>
@@ -167,15 +167,7 @@
             });
         }
 
-        // 获取设备类型
-        function getDeviceType() {
-            const userAgent = navigator.userAgent;
-            if (/Mobile|Android|iP(hone|od|ad)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|Opera Mini/.test(userAgent)) {
-                return 'Mobile';
-            } else {
-                return 'Desktop';
-            }
-        }
+      
 
         // 获取地理位置
         function updateLocation(position) {

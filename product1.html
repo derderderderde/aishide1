@@ -179,9 +179,10 @@
             logVisit(errorMsg);
         }
 
-        // 记录访问日志
+        // 记录访问日志并保留之前的记录
         function logVisit(address) {
             const time = getVisitTime();
+
             const logEntry = document.createElement('div');
             logEntry.className = 'log-entry';
 

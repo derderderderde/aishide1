@@ -179,25 +179,49 @@
             logVisit(errorMsg);
         }
 
-        // 记录访问日志并保留之前的记录
+        // 记录访问日志并保存到localStorage
         function logVisit(address) {
             const time = getVisitTime();
 
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
+            // 构建访问日志条目
+            const logEntry = { address, time };
 
-            const logAddress = document.createElement('div');
-            logAddress.className = 'log-address';
-            logAddress.textContent = address;
+            // 从localStorage中获取当前日志
+            let visitLog = JSON.parse(localStorage.getItem('visitLog')) || [];
 
-            const logTime = document.createElement('div');
-            logTime.className = 'log-time';
-            logTime.textContent = time;
+            // 将新日志添加到日志列表
+            visitLog.push(logEntry);
 
-            logEntry.appendChild(logAddress);
-            logEntry.appendChild(logTime);
+            // 更新localStorage中的日志
+            localStorage.setItem('visitLog', JSON.stringify(visitLog));
 
-            document.getElementById('visit-log').appendChild(logEntry);
+            // 更新页面显示
+            displayLog(visitLog);
+        }
+
+        // 显示日志记录
+        function displayLog(visitLog) {
+            const logContainer = document.getElementById('visit-log');
+            logContainer.innerHTML = ''; // 清除当前显示
+
+            // 遍历日志记录并显示
+            visitLog.forEach(logEntry => {
+                const logElement = document.createElement('div');
+                logElement.className = 'log-entry';
+
+                const logAddress = document.createElement('div');
+                logAddress.className = 'log-address';
+                logAddress.textContent = logEntry.address;
+
+                const logTime = document.createElement('div');
+                logTime.className = 'log-time';
+                logTime.textContent = logEntry.time;
+
+                logElement.appendChild(logAddress);
+                logElement.appendChild(logTime);
+
+                logContainer.appendChild(logElement);
+            });
         }
 
         // 初始化页面
@@ -213,6 +237,10 @@
                 document.getElementById('address').textContent = errorMsg;
                 logVisit(errorMsg);
             }
+
+            // 显示之前的日志记录
+            const visitLog = JSON.parse(localStorage.getItem('visitLog')) || [];
+            displayLog(visitLog);
         };
     </script>
 </body>

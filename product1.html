@@ -28,7 +28,8 @@
         .value {
             font-size: 16px;
             color: #333;
-            width: 35%;
+            width: 55%;
+            text-align: right;
         }
         .van-row {
             display: flex;
@@ -65,8 +66,20 @@
         .log-address {
             text-align: left;
         }
-        .log-time {
+        .log-time, .log-device {
             text-align: right;
+        }
+        .expand-button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .scan-info {
+            font-size: 14px;
+            color: red;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -127,8 +140,12 @@
 
         <!-- 访问日志显示白框 -->
         <div class="white-box">
-            <h3>访问日志</h3>
-            <div id="visit-log"></div>
+            <div class="van-col">
+                <h3>扫码信息</h3>
+                <span class="scan-info" id="scan-info">扫码0人0次</span>
+                <button class="expand-button" id="toggle-log">展开</button>
+            </div>
+            <div id="visit-log" style="display: none;"></div>
         </div>
 
         <div class="image-container">
@@ -148,6 +165,16 @@
                 minute: '2-digit',
                 second: '2-digit',
             });
+        }
+
+        // 获取设备类型
+        function getDeviceType() {
+            const userAgent = navigator.userAgent;
+            if (/Mobile|Android|iP(hone|od|ad)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|Opera Mini/.test(userAgent)) {
+                return 'Mobile';
+            } else {
+                return 'Desktop';
+            }
         }
 
         // 获取地理位置
@@ -182,21 +209,30 @@
         // 记录访问日志并保存到localStorage
         function logVisit(address) {
             const time = getVisitTime();
+            const device = getDeviceType();
 
             // 构建访问日志条目
-            const logEntry = { address, time };
+            const logEntry = { address, time, device };
 
             // 从localStorage中获取当前日志
             let visitLog = JSON.parse(localStorage.getItem('visitLog')) || [];
+            let uniqueVisitors = JSON.parse(localStorage.getItem('uniqueVisitors')) || {};
 
-            // 将新日志添加到日志列表
+            // 增加访问次数
             visitLog.push(logEntry);
+
+            // 使用设备类型作为唯一标识符记录访问者
+            if (!uniqueVisitors[device]) {
+                uniqueVisitors[device] = true;
+            }
 
             // 更新localStorage中的日志
             localStorage.setItem('visitLog', JSON.stringify(visitLog));
+            localStorage.setItem('uniqueVisitors', JSON.stringify(uniqueVisitors));
 
             // 更新页面显示
             displayLog(visitLog);
+            updateScanInfo(Object.keys(uniqueVisitors).length, visitLog.length);
         }
 
         // 显示日志记录
@@ -217,12 +253,37 @@
                 logTime.className = 'log-time';
                 logTime.textContent = logEntry.time;
 
+                const logDevice = document.createElement('div');
+                logDevice.className = 'log-device';
+                logDevice.textContent = logEntry.device;
+
                 logElement.appendChild(logAddress);
                 logElement.appendChild(logTime);
+                logElement.appendChild(logDevice);
 
                 logContainer.appendChild(logElement);
             });
         }
+
+        // 更新扫码信息显示
+        function updateScanInfo(uniqueVisitorsCount, totalVisitsCount) {
+            const scanInfo = document.getElementById('scan-info');
+            scanInfo.textContent = `扫码${uniqueVisitorsCount}人${totalVisitsCount}次`;
+        }
+
+        // 切换日志显示
+        document.getElementById('toggle-log').addEventListener('click', function() {
+            const logContainer = document.getElementById('visit-log');
+            const toggleButton = document.getElementById('toggle-log');
+            
+            if (logContainer.style.display === 'none') {
+                logContainer.style.display = 'block';
+                toggleButton.textContent = '收起';
+            } else {
+                logContainer.style.display = 'none';
+                toggleButton.textContent = '展开';
+            }
+        });
 
         // 初始化页面
         window.onload = function() {
@@ -240,7 +301,9 @@
 
             // 显示之前的日志记录
             const visitLog = JSON.parse(localStorage.getItem('visitLog')) || [];
+            const uniqueVisitors = JSON.parse(localStorage.getItem('uniqueVisitors')) || {};
             displayLog(visitLog);
+            updateScanInfo(Object.keys(uniqueVisitors).length, visitLog.length);
         };
     </script>
 </body>

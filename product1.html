@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>配方管理</title>
     <style>
-        .w100{width: 100vw;}
-
+        /* 全局样式 */
         body {
             background-color: #f4f4f4;
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
         .container {
-            width: 90%;
-            margin: 20px auto;
+            width: 100%;
+            margin: 0px auto;
         }
         .white-box {
             background-color: #ffffff;
@@ -21,58 +22,44 @@
             margin-bottom: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 87vw;
+            align-items: center;
+            margin-left: 3%;
         }
-        .green-box, .orange-box {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            color: #ffffff;
-            text-align: center;
-        }
-        .green-box {
-            background-color: #d4edda;
-            color: #155724;
-            border: 2px solid #c3e6cb;
-        }
-        .orange-box {
-            background-color: #f7ede1;
-            color: #856404;
-            border: 2px solid #ffeeba;
-        }
-        .label {
-            font-size: 14px;
+       
+        .label, .value {
+            font-size: 16px;
             color: #333;
-            text-align: left;
         }
         .value {
-            font-size: 14px;
-            color: #333;
-            width: 55%;
+            width: 60%;
             text-align: right;
         }
         .van-row {
             display: flex;
             flex-direction: column;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         .van-col {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .van-col-left {
-            text-align: left;
+         /* 图片样式 */
+         .van-col img {
+            margin-right: -175px; /* 图片与文字之间的间距 */
         }
-        .van-col-right {
-            text-align: right;
-            margin-left: auto;
+
+        /* 标题样式 */
+        .van-col h4 {
+            margin: 0;
         }
+
         .image-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height:20vh;
+            height: 20vh;
         }
         .image-container img {
             width: 100%;
@@ -83,12 +70,6 @@
             justify-content: space-between;
             padding: 5px 0;
         }
-        .log-address {
-            text-align: left;
-        }
-        .log-time {
-            text-align: right;
-        }
         .expand-button {
             padding: 5px 10px;
             border: none;
@@ -98,59 +79,61 @@
         }
         .scan-info {
             font-size: 14px;
-            color: red;
-            margin-left: 10px;
+            color: rgb(197, 20, 20);
+            margin-left: -170px;
             font-weight: bold;
         }
-        .thank-you-container {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start; /* 控制文字和图片在容器中的排列方式 */
-            margin-top: 10px;
-        }
 
-        .thank-you {
-            text-align: left; /* 确保文字与图片在一行 */
-            margin-left: 10px; /* 增加文字与图片之间的间距 */
-            font-size: 14px;
-            color: #ff8874;
-        }
-
-        .pass-image {
-            display: flex;
-            align-items: center; /* 图片在容器中的垂直居中 */
-        }
-
-        .pass-image img {
-            width: 100%;
-            height: auto;
-        }
-
+        /* 插图样式 */
         .jinggao1-image {
+            width: 100%;
             display: flex;
-            align-items: center; /* 图片在容器中的垂直居中 */
+            justify-content: center; /* 水平居中 */
+            align-items: center;    /* 垂直居中 */
         }
 
         .jinggao1-image img {
+            width: 100%; /* 全覆盖视口宽度 */
+            height: auto;
+        }
+
+        .jinggao-image img {
             width: 100%;
             height: auto;
         }
-        
 
+         /* 将 biaoshi3.jpg 固定在页面右侧中间位置 */
+         .fixed-image {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
 
     </style>
 </head>
 <body>
-    <div class="container">
+    <a href="jilu.html">
+        <div class="jinggao1-image"><img src="fan4.jpg" alt="fan4 Image"></div> 
+    </a>
+    
+    <div class="container">  
         <!-- 验证结果白框 -->
-        <div class="white-box" id="verification-box">
+        <div class="w100" id="verification-box">
             <!-- 动态内容将在此显示 -->
         </div>
 
+        <img src="biaoshi3.jpg" class="fixed-image" alt="右侧固定图片">
         <!-- 产品信息白框 -->
         <div class="white-box">
             <div class="van-row">
-                <div class="van-col" style="line-height: 35px;">产品信息</div>
+                <div class="van-col" style="margin-right: 315px;">
+                    <img src="biaoshi1.jpg">
+                    <h4>产品信息:</h4>
+                </div>
+            </div>
+            <div class="van-row">
                 <div class="van-col">
                     <div class="label">产品代号</div>
                     <div class="value">NS680-02</div>
@@ -193,8 +176,8 @@
             <div id="location-info">
                 <div class="van-row">
                     <div class="van-col">
-                        <div class="value van-col-left" id="address" style="font-size: 14px;">正在获取位置...</div>                                         
-                        <div class="value van-col-right" id="time" style="font-size: 14px;">正在获取时间...</div>
+                        <div class="value van-col-left" id="address" style="font-size: 16px;">正在获取位置...</div>                                         
+                        <div class="value van-col-right" id="time" style="font-size: 16px;">正在获取时间...</div>
                     </div>
                 </div>
             </div>
@@ -203,19 +186,27 @@
         <!-- 访问日志显示白框 -->
         <div class="white-box">
             <div class="van-col">
-                <h3>扫码信息</h3>
+                <img src="biaoshi2.jpg">
+                <h4>扫码信息:</h4>
                 <span class="scan-info" id="scan-info">扫码0人0次</span>
                 <button class="expand-button" id="toggle-log">展开</button>
             </div>
-            <div id="visit-log" style="display: none; font-size: 14px;"></div>
+            <div id="visit-log" style="display: none; font-size: 16px;"></div>
         </div>
 
         <div class="image-container">
             <img src="jifen.jpg" alt="积分图片">
         </div>
-    </div>
+
+    </div>  
 
     <script>
+        // 检查是否通过二维码访问
+        function isQRCodeVisit() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('fromQRCode') === 'true';
+        }
+
         // 获取访问时间
         function getVisitTime() {
             const now = new Date();
@@ -284,86 +275,54 @@
             // 更新页面显示
             displayLog(visitLog);
             updateScanInfo(Object.keys(uniqueVisitors).length, visitLog.length);
-            displayVerificationMessage(visitLog.length);
         }
 
-        // 显示首次或多次访问的提示信息
-        function displayVerificationMessage(visitCount) {
-            const verificationBox = document.getElementById('verification-box');
-            
-            if (visitCount === 1) {
-                verificationBox.innerHTML = `
-                <div class="pass-image"><img src="pass2.jpg" alt="Pass Image"></div>
-                    
-                           
-                
-                     
-                `;
-            } else {
-                verificationBox.innerHTML = `       
-                <div class="jinggao1-image"><img src="jinggao2.jpg" alt="jinggao1 Image"></div> 
-                                                    
-                `;
-            }
-        }
-
-        // 更新扫码次数信息
-        function updateScanInfo(uniqueVisitorCount, visitCount) {
-            const scanInfo = document.getElementById('scan-info');
-            scanInfo.textContent = `扫码${uniqueVisitorCount}人${visitCount}次`;
-        }
-
-        // 在页面上显示访问日志
+        // 显示访问日志
         function displayLog(logEntries) {
-            const visitLog = document.getElementById('visit-log');
-            visitLog.innerHTML = '';
+            const visitLogElement = document.getElementById('visit-log');
+            visitLogElement.innerHTML = '';  // 清空之前的内容
 
             logEntries.forEach(entry => {
-                const logDiv = document.createElement('div');
-                logDiv.className = 'log-entry';
-                logDiv.innerHTML = `
-                    <div class="log-address">${entry.address}</div>
-                    <div class="log-time">${entry.time}</div>
-                `;
-                visitLog.appendChild(logDiv);
+                const logItem = document.createElement('div');
+                logItem.classList.add('log-entry');
+                logItem.textContent = `${entry.time} - ${entry.address}`;
+                visitLogElement.appendChild(logItem);
             });
         }
 
-        // 切换日志显示
+        // 更新扫码信息显示
+        function updateScanInfo(uniqueVisitors, totalScans) {
+            const scanInfoElement = document.getElementById('scan-info');
+            scanInfoElement.textContent = `扫码${uniqueVisitors}人${totalScans}次`;
+        }
+
+        // 绑定展开/折叠日志功能
         document.getElementById('toggle-log').addEventListener('click', function() {
-            const visitLog = document.getElementById('visit-log');
-            if (visitLog.style.display === 'none') {
-                visitLog.style.display = 'block';
-                this.textContent = '收起';
+            const visitLogElement = document.getElementById('visit-log');
+            if (visitLogElement.style.display === 'none') {
+                visitLogElement.style.display = 'block';
+                this.textContent = '折叠';
             } else {
-                visitLog.style.display = 'none';
+                visitLogElement.style.display = 'none';
                 this.textContent = '展开';
             }
         });
 
-        // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            // 显示当前时间
-            document.getElementById('time').textContent = getVisitTime();
-
-            // 获取当前地理位置
-            if (navigator.geolocation) {
+        // 页面加载完成后执行
+        window.onload = function() {
+            if (isQRCodeVisit()) {
                 navigator.geolocation.getCurrentPosition(updateLocation, handleLocationError);
-            } else {
-                handleLocationError();
             }
 
-            // 显示存储的访问日志
-            const visitLog = JSON.parse(localStorage.getItem('visitLog')) || [];
-            displayLog(visitLog);
+            const storedLog = JSON.parse(localStorage.getItem('visitLog')) || [];
+            const uniqueVisitors = Object.keys(JSON.parse(localStorage.getItem('uniqueVisitors')) || {}).length;
+            displayLog(storedLog);
+            updateScanInfo(uniqueVisitors, storedLog.length);
 
-            // 显示存储的访问者信息
-            const uniqueVisitors = JSON.parse(localStorage.getItem('uniqueVisitors')) || {};
-            updateScanInfo(Object.keys(uniqueVisitors).length, visitLog.length);
-
-            // 显示防伪验证信息
-            displayVerificationMessage(visitLog.length);
-        });
+            // 更新访问时间
+            const currentTime = getVisitTime();
+            document.getElementById('time').textContent = currentTime;
+        };
     </script>
 </body>
 </html>

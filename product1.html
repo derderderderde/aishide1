@@ -48,6 +48,7 @@
          /* 图片样式 */
          .van-col img {
             margin-right: -175px; /* 图片与文字之间的间距 */
+           
         }
 
         /* 标题样式 */
@@ -101,6 +102,7 @@
             width: 100%;
             height: auto;
         }
+
 
          /* 将 biaoshi3.jpg 固定在页面右侧中间位置 */
          .fixed-image {
@@ -198,15 +200,11 @@
             <img src="jifen.jpg" alt="积分图片">
         </div>
 
+        
+
     </div>  
 
     <script>
-        // 检查是否通过二维码访问
-        function isQRCodeVisit() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('fromQRCode') === 'true';
-        }
-
         // 获取访问时间
         function getVisitTime() {
             const now = new Date();
@@ -275,54 +273,110 @@
             // 更新页面显示
             displayLog(visitLog);
             updateScanInfo(Object.keys(uniqueVisitors).length, visitLog.length);
+            displayVerificationMessage(visitLog.length);
         }
 
-        // 显示访问日志
+        // 显示首次或多次访问的提示信息
+        function displayVerificationMessage(visitCount) {
+            const verificationBox = document.getElementById('verification-box');
+            
+            if (visitCount === 1) {
+                verificationBox.innerHTML = `
+                    <div class="jinggao-image"><img src="jinggao4.jpg" alt="jinggao Image"></div> 
+                `;
+            } else {
+                verificationBox.innerHTML = `     
+                    <div class="jinggao-image"><img src="jinggao3.jpg" alt="jinggao Image"></div> 
+                `;
+            }
+        }
+
+        // 更新扫码次数信息
+        function updateScanInfo(uniqueVisitorCount, visitCount) {
+            const scanInfo = document.getElementById('scan-info');
+            scanInfo.textContent = `扫码${uniqueVisitorCount}人${visitCount}次`;
+        }
+
+        // 在页面上显示访问日志
         function displayLog(logEntries) {
-            const visitLogElement = document.getElementById('visit-log');
-            visitLogElement.innerHTML = '';  // 清空之前的内容
+            const visitLog = document.getElementById('visit-log');
+            visitLog.innerHTML = '';
 
             logEntries.forEach(entry => {
-                const logItem = document.createElement('div');
-                logItem.classList.add('log-entry');
-                logItem.textContent = `${entry.time} - ${entry.address}`;
-                visitLogElement.appendChild(logItem);
+                const logDiv = document.createElement('div');
+                logDiv.className = 'log-entry';
+                logDiv.innerHTML = `
+                    <div>${entry.address}</div>
+                    <div>${entry.time}</div>
+                `;
+                visitLog.appendChild(logDiv);
             });
         }
 
-        // 更新扫码信息显示
-        function updateScanInfo(uniqueVisitors, totalScans) {
-            const scanInfoElement = document.getElementById('scan-info');
-            scanInfoElement.textContent = `扫码${uniqueVisitors}人${totalScans}次`;
+        // 初始化页面时加载日志
+        function init() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updateLocation, handleLocationError);
+            } else {
+                handleLocationError();
+            }
+
+            // 从localStorage中加载访问日志并显示
+            const visitLog = JSON.parse(localStorage.getItem('visitLog')) || [];
+            displayLog(visitLog);
+
+            // 更新扫码信息
+            const uniqueVisitors = JSON.parse(localStorage.getItem('uniqueVisitors')) || {};
+            updateScanInfo(Object.keys(uniqueVisitors).length, visitLog.length);
+
+            // 显示访问验证信息
+            displayVerificationMessage(visitLog.length);
+
+            // 展开/收起日志
+            document.getElementById('toggle-log').addEventListener('click', function () {
+                const log = document.getElementById('visit-log');
+                if (log.style.display === 'none') {
+                    log.style.display = 'block';
+                    this.textContent = '收起';
+                } else {
+                    log.style.display = 'none';
+                    this.textContent = '展开';
+                }
+            });
         }
 
-        // 绑定展开/折叠日志功能
-        document.getElementById('toggle-log').addEventListener('click', function() {
-            const visitLogElement = document.getElementById('visit-log');
-            if (visitLogElement.style.display === 'none') {
-                visitLogElement.style.display = 'block';
-                this.textContent = '折叠';
-            } else {
-                visitLogElement.style.display = 'none';
-                this.textContent = '展开';
-            }
-        });
+        window.onload = init;
 
-        // 页面加载完成后执行
-        window.onload = function() {
-            if (isQRCodeVisit()) {
-                navigator.geolocation.getCurrentPosition(updateLocation, handleLocationError);
-            }
+        // 检查并记录访问次数
+        const pageVisitKey = "product1VisitCount";
+        let visitCount = localStorage.getItem(pageVisitKey) || 0;
+        visitCount = parseInt(visitCount) + 1;
+        localStorage.setItem(pageVisitKey, visitCount);
 
-            const storedLog = JSON.parse(localStorage.getItem('visitLog')) || [];
-            const uniqueVisitors = Object.keys(JSON.parse(localStorage.getItem('uniqueVisitors')) || {}).length;
-            displayLog(storedLog);
-            updateScanInfo(uniqueVisitors, storedLog.length);
+        // 根据访问次数设置验证状态
+        let status = "";
+        if (visitCount === 1) {
+            status = "已验证";
+        } else {
+            status = "有伪造风险";
+        }
 
-            // 更新访问时间
-            const currentTime = getVisitTime();
-            document.getElementById('time').textContent = currentTime;
+        // 显示验证状态
+        alert(`防伪码验证状态: ${status}`);
+
+        // 存储验证结果到 localStorage
+        const productInfo = {
+            productName: "NS680-02慢干固剂(1升罐装)",  // 假设产品名固定
+            antiFakeCode: "2979886304022021",  // 假设固定的防伪码
+            status: status,
+            time: new Date().toLocaleString(),
+            points: visitCount === 1 ? 100 : 0,  // 仅首次访问获得积分
+            productPage: window.location.href
         };
+
+        let records = JSON.parse(localStorage.getItem('records')) || [];
+        records.push(productInfo);
+        localStorage.setItem('records', JSON.stringify(records));
     </script>
 </body>
 </html>
